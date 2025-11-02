@@ -243,7 +243,7 @@ class HzToast {
   /// No context lookup is needed since the overlay is provided directly.
   static void initializeWithBuiltInOverlay() {
     if (debugMode) {
-      debugPrint('🍞 HzToast Debug: Initialized with built-in overlay - no context lookup needed');
+      debugPrint('🍞 HzToastInitializer Debug: Toast system initialized with built-in overlay');
     }
   }
 }

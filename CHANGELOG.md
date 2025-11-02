@@ -1,3 +1,13 @@
+## 0.0.7
+
+- **Code Optimization**: Removed unused `_initialized` variable and related code
+  - Cleaned up unnecessary state tracking in `HzToast` singleton
+  - Removed unused instance variable and all its references
+  - Simplified `dispose()` and `initializeWithBuiltInOverlay()` methods
+  - Reduced code complexity without affecting functionality
+- **Performance**: Minor performance improvement by eliminating unused variable tracking
+- **Maintenance**: Improved code clarity and reduced technical debt
+
 ## 0.0.6
 
 - **Simplified Setup**: Major architectural improvement with `HzToastInitializer` widget

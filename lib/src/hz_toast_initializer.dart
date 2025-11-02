@@ -29,8 +29,19 @@ class HzToastInitializer extends StatefulWidget {
   /// The child widget to display.
   final Widget child;
 
+  /// The spacing between the toasts and the screen edges.
+  final double? edgeSpacing;
+
+  /// The spacing between individual toasts.
+  final double? spacing;
+
   /// Creates a widget that initializes the toast system.
-  const HzToastInitializer({super.key, required this.child});
+  const HzToastInitializer({
+    super.key,
+    required this.child,
+    this.edgeSpacing,
+    this.spacing,
+  });
 
   @override
   State<HzToastInitializer> createState() => _HzToastInitializerState();
@@ -40,13 +51,7 @@ class _HzToastInitializerState extends State<HzToastInitializer> {
   @override
   void initState() {
     super.initState();
-    // Initialize the toast system to use our built-in overlay
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      HzToast.initializeWithBuiltInOverlay();
-      if (HzToast.debugMode) {
-        debugPrint('🍞 HzToastInitializer Debug: Toast system initialized with built-in overlay');
-      }
-    });
+    HzToast.initializeWithBuiltInOverlay();
   }
 
   @override
@@ -60,7 +65,10 @@ class _HzToastInitializerState extends State<HzToastInitializer> {
         ),
         // Toast display overlay
         OverlayEntry(
-          builder: (context) => const HzToastWidget(),
+          builder: (context) => HzToastWidget(
+            edgeSpacing: widget.edgeSpacing,
+            spacing: widget.spacing,
+          ),
         ),
       ],
     );

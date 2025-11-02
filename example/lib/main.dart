@@ -3,7 +3,7 @@ import 'package:hz_toast/hz_toast.dart';
 
 void main() {
   // Enable debug mode for toast troubleshooting
-  HzToast.debugMode = false;
+  HzToast.debugMode = true;
 
   runApp(const MyApp());
 }
