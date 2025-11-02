@@ -21,7 +21,7 @@ _Hz Toast in action - showcasing various toast types, animations, and customizat
 - 📱 **Responsive**: Adapts to different screen sizes with configurable max width
 - ✨ **Smooth Animations**: Beautiful slide and fade animations
 - 🖱️ **Interactive**: Clickable toasts with custom tap handlers
-- 🎯 **Positioned**: Top-right positioned toasts that stack properly
+- 🎯 **Flexible Positioning**: Support for all four corners (top-left, top-right, bottom-left, bottom-right)
 - 🎛️ **Builder Pattern**: Custom builders for title, icons, and close buttons
 - 🔧 **Easy Integration**: Simple overlay setup with minimal configuration
 
@@ -31,7 +31,7 @@ Add this to your package's `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  hz_toast: ^0.0.4
+  hz_toast: ^0.0.5
 ```
 
 Then run:
@@ -142,6 +142,42 @@ HzToast.show(HzToastData(
   },
 ));
 ```
+
+### Toast Positioning
+
+Hz Toast supports positioning toasts in any corner of the screen using the `alignment` property:
+
+```dart
+// Top-right corner (default)
+HzToast.show(HzToastData(
+  'Top right toast',
+  type: HzToastType.info,
+  alignment: HzToastAlignment.topRight,
+));
+
+// Top-left corner
+HzToast.show(HzToastData(
+  'Top left toast',
+  type: HzToastType.success,
+  alignment: HzToastAlignment.topLeft,
+));
+
+// Bottom-right corner
+HzToast.show(HzToastData(
+  'Bottom right toast',
+  type: HzToastType.warning,
+  alignment: HzToastAlignment.bottomRight,
+));
+
+// Bottom-left corner
+HzToast.show(HzToastData(
+  'Bottom left toast',
+  type: HzToastType.error,
+  alignment: HzToastAlignment.bottomLeft,
+));
+```
+
+The `HzToastWidget` automatically handles all alignments - you only need to add one instance to your overlay, and it will display toasts in the correct positions based on their alignment property.
 
 ## Advanced Usage
 

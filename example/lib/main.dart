@@ -20,8 +20,8 @@ class MyApp extends StatelessWidget {
             initialEntries: [
               OverlayEntry(builder: (context) => child!),
 
-              //add toast overlay entry
-              OverlayEntry(builder: (context) => HzToastWidget()), // <-- HzToastWidget
+              // Single toast widget that handles all alignments automatically
+              OverlayEntry(builder: (context) => const HzToastWidget()),
             ],
           ),
         );
@@ -41,6 +41,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
+  int _alignmentCounter = 0;
 
   void _incrementCounter() {
     setState(() {
@@ -149,6 +150,87 @@ class _MyHomePageState extends State<MyHomePage> {
     ));
   }
 
+  // Alignment Examples
+  void _showTopRightToast() {
+    setState(() => _alignmentCounter++);
+    HzToast.show(HzToastData(
+      'Top Right Toast #$_alignmentCounter',
+      type: HzToastType.info,
+      alignment: HzToastAlignment.topRight,
+      backgroundColor: Colors.blue.shade50,
+      textColor: Colors.blue.shade800,
+      iconColor: Colors.blue,
+    ));
+  }
+
+  void _showTopLeftToast() {
+    setState(() => _alignmentCounter++);
+    HzToast.show(HzToastData(
+      'Top Left Toast #$_alignmentCounter',
+      type: HzToastType.success,
+      alignment: HzToastAlignment.topLeft,
+      backgroundColor: Colors.green.shade50,
+      textColor: Colors.green.shade800,
+      iconColor: Colors.green,
+    ));
+  }
+
+  void _showBottomRightToast() {
+    setState(() => _alignmentCounter++);
+    HzToast.show(HzToastData(
+      'Bottom Right Toast #$_alignmentCounter',
+      type: HzToastType.warning,
+      alignment: HzToastAlignment.bottomRight,
+      backgroundColor: Colors.orange.shade50,
+      textColor: Colors.orange.shade800,
+      iconColor: Colors.orange,
+    ));
+  }
+
+  void _showBottomLeftToast() {
+    setState(() => _alignmentCounter++);
+    HzToast.show(HzToastData(
+      'Bottom Left Toast #$_alignmentCounter',
+      type: HzToastType.error,
+      alignment: HzToastAlignment.bottomLeft,
+      backgroundColor: Colors.red.shade50,
+      textColor: Colors.red.shade800,
+      iconColor: Colors.red,
+    ));
+  }
+
+  void _showAllAlignments() {
+    setState(() => _alignmentCounter++);
+
+    HzToast.show(HzToastData(
+      'Top Right #$_alignmentCounter',
+      type: HzToastType.info,
+      alignment: HzToastAlignment.topRight,
+      duration: const Duration(seconds: 6),
+    ));
+
+    HzToast.show(HzToastData(
+      'Top Left #$_alignmentCounter',
+      type: HzToastType.success,
+      alignment: HzToastAlignment.topLeft,
+      duration: const Duration(seconds: 6),
+    ));
+
+    HzToast.show(HzToastData(
+      'Bottom Right #$_alignmentCounter',
+      type: HzToastType.warning,
+      alignment: HzToastAlignment.bottomRight,
+      duration: const Duration(seconds: 6),
+    ));
+
+    HzToast.show(HzToastData(
+      'Bottom Left #$_alignmentCounter',
+      type: HzToastType.error,
+      alignment: HzToastAlignment.bottomLeft,
+      duration: const Duration(seconds: 6),
+    ));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -156,47 +238,139 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
       ),
-      body: Center(
-        child: Column(
-          spacing: 16,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text('You have pushed the button this many times:'),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-            ElevatedButton(
-              onPressed: _incrementCounter,
-              child: const Text('Increment Counter and Show Success Toast'),
-            ),
+      body: SingleChildScrollView(
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              spacing: 16,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                const Text('You have pushed the button this many times:'),
+                Text(
+                  '$_counter',
+                  style: Theme.of(context).textTheme.headlineMedium,
+                ),
+                ElevatedButton(
+                  onPressed: _incrementCounter,
+                  child: const Text('Increment Counter and Show Success Toast'),
+                ),
 
-            // Buttons to show different toasts
-            ElevatedButton(
-              onPressed: _showErrorToast,
-              child: const Text('Show Error Toast'),
+                const Divider(height: 32),
+                const Text(
+                  'Basic Toast Types',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+
+                // Buttons to show different toasts
+                ElevatedButton(
+                  onPressed: _showErrorToast,
+                  child: const Text('Show Error Toast'),
+                ),
+                ElevatedButton(
+                  onPressed: _showWarningToast,
+                  child: const Text('Show Warning Toast'),
+                ),
+                ElevatedButton(
+                  onPressed: _showInfoToast,
+                  child: const Text('Show Info Toast'),
+                ),
+                ElevatedButton(
+                  onPressed: _withProgressToast,
+                  child: const Text('Show Toast with Progress Bar'),
+                ),
+                ElevatedButton(
+                  onPressed: _withProgressToast2,
+                  child: const Text('Show Toast with Dynamic Progress'),
+                ),
+                ElevatedButton(
+                  onPressed: _randomStyledToast,
+                  child: const Text('Show Random Styled Toast'),
+                ),
+
+                const Divider(height: 32),
+                const Text(
+                  'Toast Alignment Examples',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+
+                Row(
+                  spacing: 8,
+                  children: [
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: _showTopLeftToast,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.green.shade100,
+                          foregroundColor: Colors.green.shade800,
+                        ),
+                        child: const Text('Top Left'),
+                      ),
+                    ),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: _showTopRightToast,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blue.shade100,
+                          foregroundColor: Colors.blue.shade800,
+                        ),
+                        child: const Text('Top Right'),
+                      ),
+                    ),
+                  ],
+                ),
+
+                Row(
+                  spacing: 8,
+                  children: [
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: _showBottomLeftToast,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.red.shade100,
+                          foregroundColor: Colors.red.shade800,
+                        ),
+                        child: const Text('Bottom Left'),
+                      ),
+                    ),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: _showBottomRightToast,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.orange.shade100,
+                          foregroundColor: Colors.orange.shade800,
+                        ),
+                        child: const Text('Bottom Right'),
+                      ),
+                    ),
+                  ],
+                ),
+
+                ElevatedButton.icon(
+                  onPressed: _showAllAlignments,
+                  icon: const Icon(Icons.grid_view),
+                  label: const Text('Show All Alignments'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.purple.shade100,
+                    foregroundColor: Colors.purple.shade800,
+                    minimumSize: const Size(double.infinity, 48),
+                  ),
+                ),
+
+                const SizedBox(height: 20),
+                ElevatedButton.icon(
+                  onPressed: () => HzToast.hideAll(),
+                  icon: const Icon(Icons.clear_all),
+                  label: const Text('Hide All Toasts'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.grey.shade200,
+                    foregroundColor: Colors.grey.shade800,
+                    minimumSize: const Size(double.infinity, 48),
+                  ),
+                ),
+              ],
             ),
-            ElevatedButton(
-              onPressed: _showWarningToast,
-              child: const Text('Show Warning Toast'),
-            ),
-            ElevatedButton(
-              onPressed: _showInfoToast,
-              child: const Text('Show Info Toast'),
-            ),
-            ElevatedButton(
-              onPressed: _withProgressToast,
-              child: const Text('Show Toast with Progress Bar'),
-            ),
-            ElevatedButton(
-              onPressed: _withProgressToast2,
-              child: const Text('Show Toast with Dynamic Progress'),
-            ),
-            ElevatedButton(
-              onPressed: _randomStyledToast,
-              child: const Text('Show Random Styled Toast'),
-            ),
-          ],
+          ),
         ),
       ),
     );

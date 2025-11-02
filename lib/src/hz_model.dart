@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:hz_toast/src/hz_type_enum.dart';
+import 'package:hz_toast/src/hz_alignment_enum.dart';
 
 /// Configuration data for a toast notification.
 ///
@@ -35,6 +36,12 @@ class HzToastData {
   /// Determines the default colors for icons, text, and other elements.
   /// See [HzToastType] for available options.
   final HzToastType type;
+
+  /// The positioning alignment for the toast notification.
+  ///
+  /// Determines which corner of the screen the toast will appear in.
+  /// Defaults to [HzToastAlignment.topRight] if not specified.
+  final HzToastAlignment alignment;
 
   /// Callback function executed when the toast is tapped.
   ///
@@ -207,6 +214,7 @@ class HzToastData {
     this.message, {
     String? id,
     this.type = HzToastType.error,
+    this.alignment = HzToastAlignment.topRight,
     this.onTap,
     this.onClose,
     this.duration = const Duration(seconds: 4),
@@ -249,6 +257,7 @@ class HzToastData {
     String? id,
     String? message,
     HzToastType? type,
+    HzToastAlignment? alignment,
     Function()? onTap,
     Duration? duration,
     bool? clickable,
@@ -276,6 +285,7 @@ class HzToastData {
       message ?? this.message,
       id: id ?? this.id,
       type: type ?? this.type,
+      alignment: alignment ?? this.alignment,
       onTap: onTap ?? this.onTap,
       duration: duration ?? this.duration,
       clickable: clickable ?? this.clickable,

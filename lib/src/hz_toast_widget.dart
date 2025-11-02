@@ -6,11 +6,14 @@ import 'package:hz_toast/hz_toast.dart';
 /// A widget that displays and manages toast notifications in an overlay.
 ///
 /// This widget should be placed in your app's overlay to handle the
-/// display of all toast notifications. It listens to [HzToast.toasts]
-/// and automatically shows, animates, and positions toasts.
+/// display of all toast notifications. It automatically manages all
+/// toast alignments internally, so you only need to add one instance.
 ///
-/// The widget positions toasts in the top-right area of the screen
-/// and stacks multiple toasts vertically with proper spacing.
+/// The widget automatically handles:
+/// - All toast alignments (top-left, top-right, bottom-left, bottom-right)
+/// - Toast positioning and stacking
+/// - Entry and exit animations
+/// - User interactions and auto-hide timers
 ///
 /// Example usage:
 /// ```dart
@@ -28,10 +31,12 @@ import 'package:hz_toast/hz_toast.dart';
 /// )
 /// ```
 class HzToastWidget extends StatelessWidget {
-  /// Distance from the top of the screen to the first toast.
+  /// Distance from the edge of the screen to the first toast.
   ///
-  /// Controls the top margin for the toast stack. Defaults to 20 pixels.
-  final double? topSpacing;
+  /// For top alignments, this is the distance from the top.
+  /// For bottom alignments, this is the distance from the bottom.
+  /// Defaults to 20 pixels.
+  final double? edgeSpacing;
 
   /// Vertical spacing between multiple toasts.
   ///
@@ -39,46 +44,109 @@ class HzToastWidget extends StatelessWidget {
   /// any margins specified in individual [HzToastData.margin] properties.
   final double? spacing;
 
-  /// Creates a toast display widget.
+  /// Creates a toast display widget that handles all alignments automatically.
   ///
-  /// The [topSpacing] and [spacing] parameters are optional and provide
-  /// control over toast positioning and layout.
-  const HzToastWidget({super.key, this.topSpacing, this.spacing});
+  /// The [edgeSpacing] and [spacing] parameters provide control over positioning.
+  const HzToastWidget({
+    super.key,
+    this.edgeSpacing,
+    this.spacing,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final width = MediaQuery.sizeOf(context).width;
+    final size = MediaQuery.sizeOf(context);
+    final width = size.width;
+    final height = size.height;
 
     return ValueListenableBuilder<List<HzToastData>>(
       valueListenable: HzToast.toasts,
-      builder: (context, toasts, child) {
+      builder: (context, allToasts, child) {
         return Stack(
           children: [
-            for (int i = 0; i < toasts.length; i++)
-              AnimatedPositioned(
-                key: ValueKey('position_${toasts[i].id}'),
-                duration: const Duration(milliseconds: 300),
-                curve: Curves.easeInOut,
-                // Calculate position based on previous toasts' heights and margins
-                top: (topSpacing ?? 20) +
-                    toasts.sublist(0, i).fold<double>(
-                          0,
-                          (previousValue, element) =>
-                              previousValue +
-                              (spacing ?? 0) + // Default vertical spacing
-                              (element.margin?.vertical ?? 0) + // Toast-specific margin
-                              48, // Approximate height of each toast
-                        ),
-                right: 0,
-                child: _AnimatedToast(
-                  key: ValueKey(toasts[i].id),
-                  data: toasts[i],
-                  width: width,
-                ),
+            // Generate toast containers for each alignment
+            for (final alignment in HzToastAlignment.values)
+              _AlignmentToastContainer(
+                alignment: alignment,
+                toasts: allToasts.where((toast) => toast.alignment == alignment).toList(),
+                width: width,
+                height: height,
+                edgeSpacing: edgeSpacing,
+                spacing: spacing,
               ),
           ],
         );
       },
+    );
+  }
+}
+
+/// Internal widget that manages toasts for a specific alignment.
+class _AlignmentToastContainer extends StatelessWidget {
+  final HzToastAlignment alignment;
+  final List<HzToastData> toasts;
+  final double width;
+  final double height;
+  final double? edgeSpacing;
+  final double? spacing;
+
+  const _AlignmentToastContainer({
+    required this.alignment,
+    required this.toasts,
+    required this.width,
+    required this.height,
+    this.edgeSpacing,
+    this.spacing,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    if (toasts.isEmpty) return const SizedBox.shrink();
+
+    return Stack(
+      children: [
+        for (int i = 0; i < toasts.length; i++) _buildPositionedToast(toasts, i),
+      ],
+    );
+  }
+
+  /// Builds a positioned toast based on the alignment and index.
+  Widget _buildPositionedToast(List<HzToastData> toasts, int index) {
+    final toast = toasts[index];
+    final stackOffset = _calculateStackOffset(toasts, index);
+    final baseSpacing = edgeSpacing ?? 20;
+
+    return AnimatedPositioned(
+      key: ValueKey('position_${toast.id}'),
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+      // Position based on alignment
+      top: alignment.isTop ? baseSpacing + stackOffset : null,
+      bottom: alignment.isBottom ? baseSpacing + stackOffset : null,
+      left: alignment.isLeft ? 0 : null,
+      right: alignment.isRight ? 0 : null,
+      child: _AnimatedToast(
+        key: ValueKey(toast.id),
+        data: toast,
+        width: width,
+        alignment: alignment,
+      ),
+    );
+  }
+
+  /// Calculates the vertical offset for stacking toasts.
+  double _calculateStackOffset(List<HzToastData> toasts, int index) {
+    final toastsToConsider = alignment.isTop
+        ? toasts.sublist(0, index) // For top alignment, consider previous toasts
+        : toasts.sublist(index + 1).reversed.toList(); // For bottom alignment, consider following toasts
+
+    return toastsToConsider.fold<double>(
+      0,
+      (previousValue, element) =>
+          previousValue +
+          (spacing ?? 10) + // Default vertical spacing
+          (element.margin?.vertical ?? 0) + // Toast-specific margin
+          48, // Approximate height of each toast
     );
   }
 }
@@ -95,7 +163,15 @@ class _AnimatedToast extends StatefulWidget {
   /// The available screen width for layout calculations.
   final double width;
 
-  const _AnimatedToast({super.key, required this.data, required this.width});
+  /// The positioning alignment for animation direction.
+  final HzToastAlignment alignment;
+
+  const _AnimatedToast({
+    super.key,
+    required this.data,
+    required this.width,
+    required this.alignment,
+  });
 
   @override
   State<_AnimatedToast> createState() => _AnimatedToastState();
@@ -178,10 +254,22 @@ class _AnimatedToastState extends State<_AnimatedToast> {
     super.dispose();
   }
 
+  /// Calculates the slide offset based on the toast alignment.
+  Offset _getSlideOffset() {
+    switch (widget.alignment) {
+      case HzToastAlignment.topLeft:
+      case HzToastAlignment.bottomLeft:
+        return const Offset(-1.0, 0.0); // Slide from left
+      case HzToastAlignment.topRight:
+      case HzToastAlignment.bottomRight:
+        return const Offset(1.0, 0.0); // Slide from right
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    // Calculate animation values based on visibility state
-    final offset = _visible ? Offset.zero : const Offset(1.0, 0.0);
+    // Calculate animation values based on visibility state and alignment
+    final offset = _visible ? Offset.zero : _getSlideOffset();
     final opacity = _visible ? 1.0 : 0.0;
 
     return AnimatedSlide(
@@ -193,7 +281,11 @@ class _AnimatedToastState extends State<_AnimatedToast> {
         opacity: opacity,
         child: Stack(
           children: [
-            _ToastBody(width: widget.width, data: widget.data),
+            _ToastBody(
+              width: widget.width,
+              data: widget.data,
+              alignment: widget.alignment,
+            ),
 
             // Progress bar overlay (only visible when auto-hide is enabled and progress bar is requested)
             if (widget.data.showProgressBar && widget.data.autoHide)
@@ -239,7 +331,14 @@ class _ToastBody extends StatelessWidget {
   /// The toast configuration data containing all styling and content information.
   final HzToastData data;
 
-  const _ToastBody({required this.width, required this.data});
+  /// The positioning alignment for styling adjustments.
+  final HzToastAlignment alignment;
+
+  const _ToastBody({
+    required this.width,
+    required this.data,
+    required this.alignment,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -257,11 +356,7 @@ class _ToastBody extends StatelessWidget {
         decoration: data.decoration ??
             BoxDecoration(
               color: data.backgroundColor ?? Colors.white,
-              borderRadius: data.borderRadius ??
-                  const BorderRadius.only(
-                    topLeft: Radius.circular(8),
-                    bottomLeft: Radius.circular(8),
-                  ),
+              borderRadius: data.borderRadius ?? _getDefaultBorderRadius(),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withAlpha(50),
@@ -305,5 +400,31 @@ class _ToastBody extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  /// Gets the default border radius based on alignment.
+  BorderRadiusGeometry _getDefaultBorderRadius() {
+    switch (alignment) {
+      case HzToastAlignment.topLeft:
+        return const BorderRadius.only(
+          topRight: Radius.circular(8),
+          bottomRight: Radius.circular(8),
+        );
+      case HzToastAlignment.topRight:
+        return const BorderRadius.only(
+          topLeft: Radius.circular(8),
+          bottomLeft: Radius.circular(8),
+        );
+      case HzToastAlignment.bottomLeft:
+        return const BorderRadius.only(
+          topRight: Radius.circular(8),
+          bottomRight: Radius.circular(8),
+        );
+      case HzToastAlignment.bottomRight:
+        return const BorderRadius.only(
+          topLeft: Radius.circular(8),
+          bottomLeft: Radius.circular(8),
+        );
+    }
   }
 }

@@ -184,8 +184,18 @@ class HzToast {
   /// HzToast.hideAll();
   /// ```
   static void hideAll() {
-    for (final t in _toasts.value) {
-      hide(t.id);
+    // Send remove signals for all current toasts to trigger animations
+    for (final toast in _toasts.value) {
+      _toastRemoveController.add(toast.id);
     }
+  }
+
+  /// Immediately clears all toasts without animations.
+  ///
+  /// This is primarily intended for testing scenarios where you need
+  /// immediate cleanup without waiting for animations.
+  @visibleForTesting
+  static void clearAll() {
+    _toasts.value = [];
   }
 }
