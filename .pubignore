@@ -1,0 +1,15 @@
+# Exclude video files from package publication
+
+\*.mp4
+
+# Exclude development files
+
+.vscode/
+.idea/
+\*.iml
+
+# Exclude example build artifacts
+
+example/build/
+example/.flutter-plugins
+example/.flutter-plugins-dependencies

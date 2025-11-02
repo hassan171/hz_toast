@@ -31,7 +31,7 @@ Add this to your package's `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  hz_toast: ^0.0.3
+  hz_toast: ^0.0.4
 ```
 
 Then run:

@@ -1,3 +1,12 @@
+## 0.0.4
+
+- **Documentation Overhaul**: Added comprehensive inline documentation following Flutter's style guidelines
+- **API Documentation**: Detailed documentation for all classes, methods, and properties
+- **Code Examples**: Added practical usage examples throughout the codebase
+- **Developer Experience**: Improved IDE support with better parameter descriptions and auto-completion
+- **Library Documentation**: Enhanced main library file with feature overview and setup instructions
+- **Cross-References**: Added proper linking between related classes and methods
+
 ## 0.0.3
 
 - Added animated GIF demo to README for better visual showcase
