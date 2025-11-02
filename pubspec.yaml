@@ -1,7 +1,8 @@
 name: hz_toast
 description: "A customizable toast notification package for Flutter applications."
-version: 0.0.1
+version: 0.0.2
 homepage: https://github.com/hassan171/hz_toast
+repository: https://github.com/hassan171/hz_toast
 
 environment:
   sdk: ">=3.5.4 <4.0.0"

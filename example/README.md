@@ -1,16 +1,56 @@
-# flutter_application_1
+# Hz Toast Example
 
-A new Flutter project.
+This example demonstrates how to use the `hz_toast` package in a Flutter application.
 
-## Getting Started
+## Features Demonstrated
 
-This project is a starting point for a Flutter application.
+- Basic toast types (success, error, warning, info)
+- Toast with progress bars
+- Dynamic toast updates with live progress
+- Custom styled toasts
+- Interactive toasts with tap handlers
 
-A few resources to get you started if this is your first Flutter project:
+## Running the Example
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+1. Make sure you have Flutter installed
+2. Clone the repository:
+   ```bash
+   git clone https://github.com/hassan171/hz_toast.git
+   cd hz_toast/example
+   ```
+3. Get dependencies:
+   ```bash
+   flutter pub get
+   ```
+4. Run the app:
+   ```bash
+   flutter run
+   ```
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Key Implementation
+
+The main setup is in `lib/main.dart` where we add the `HzToastWidget` to the app's overlay:
+
+```dart
+builder: (context, child) {
+  return Material(
+    child: Overlay(
+      initialEntries: [
+        OverlayEntry(builder: (context) => child!),
+        OverlayEntry(builder: (context) => const HzToastWidget()),
+      ],
+    ),
+  );
+},
+```
+
+Then you can show toasts from anywhere in your app:
+
+```dart
+HzToast.show(HzToastData(
+  'Your message here',
+  type: HzToastType.success,
+));
+```
+
+For more details, see the [main package documentation](https://pub.dev/packages/hz_toast).
