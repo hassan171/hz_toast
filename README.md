@@ -2,6 +2,16 @@
 
 A highly customizable and feature-rich toast notification package for Flutter applications. Display beautiful, animated toast messages with various types, styles, and interactive features.
 
+## Demo
+
+<div align="center">
+
+![Hz Toast Demo](showcase.gif)
+
+_Hz Toast in action - showcasing various toast types, animations, and customization options_
+
+</div>
+
 ## Features
 
 - 🎨 **Multiple Toast Types**: Error, Success, Warning, and Info with predefined color schemes
@@ -21,7 +31,7 @@ Add this to your package's `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  hz_toast: ^0.0.1
+  hz_toast: ^0.0.3
 ```
 
 Then run:
@@ -268,5 +278,6 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-#   h z _ t o a s t  
+#   h z _ t o a s t 
+ 
  

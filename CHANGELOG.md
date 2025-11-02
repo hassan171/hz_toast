@@ -1,3 +1,8 @@
+## 0.0.3
+
+- Added animated GIF demo to README for better visual showcase
+- Improved documentation with visual demonstration of package features
+
 ## 0.0.2
 
 - Added repository field to pubspec.yaml for better pub.dev integration
