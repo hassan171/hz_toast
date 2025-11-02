@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:hz_toast/hz_toast.dart';
 
 void main() {
+  // Enable debug mode for toast troubleshooting
+  HzToast.debugMode = false;
+
   runApp(const MyApp());
 }
 
@@ -11,20 +14,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Hz Toast Test',
       theme: ThemeData(colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple)),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MyHomePage(title: 'Hz Toast Test'),
       builder: (context, child) {
-        return Material(
-          child: Overlay(
-            initialEntries: [
-              OverlayEntry(builder: (context) => child!),
-
-              // Single toast widget that handles all alignments automatically
-              OverlayEntry(builder: (context) => const HzToastWidget()),
-            ],
-          ),
-        );
+        return HzToastInitializer(child: child!);
       },
     );
   }

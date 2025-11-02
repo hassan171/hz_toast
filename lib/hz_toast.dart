@@ -36,20 +36,14 @@
 ///
 /// ## Setup
 ///
-/// Add [HzToastWidget] to your app's overlay:
+/// Wrap your app with [HzToastInitializer]:
 ///
 /// ```dart
 /// MaterialApp(
 ///   builder: (context, child) {
-///     return Material(
-///       child: Overlay(
-///         initialEntries: [
-///           OverlayEntry(builder: (context) => child!),
-///           OverlayEntry(builder: (context) => const HzToastWidget()),
-///         ],
-///       ),
-///     );
+///     return HzToastInitializer(child: child!);
 ///   },
+///   home: MyHomePage(),
 /// )
 /// ```
 library;
@@ -57,5 +51,6 @@ library;
 export 'src/hz_toast.dart';
 export 'src/hz_model.dart';
 export 'src/hz_toast_widget.dart';
+export 'src/hz_toast_initializer.dart';
 export 'src/hz_type_enum.dart';
 export 'src/hz_alignment_enum.dart';

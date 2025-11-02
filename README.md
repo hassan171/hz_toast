@@ -31,7 +31,7 @@ Add this to your package's `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  hz_toast: ^0.0.5
+  hz_toast: ^0.0.6
 ```
 
 Then run:
@@ -42,7 +42,7 @@ flutter pub get
 
 ## Setup
 
-To use Hz Toast, you need to add the `HzToastWidget` to your app's overlay. This is typically done in your main app widget:
+Setting up Hz Toast is simple! Just add the `HzToastInitializer` widget to your MaterialApp's builder:
 
 ```dart
 import 'package:flutter/material.dart';
@@ -58,19 +58,35 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple)),
       home: const MyHomePage(),
       builder: (context, child) {
-        return Material(
-          child: Overlay(
-            initialEntries: [
-              OverlayEntry(builder: (context) => child!),
-              // Add the HzToastWidget to the overlay
-              OverlayEntry(builder: (context) => const HzToastWidget()),
-            ],
-          ),
-        );
+        // Add this widget to enable toasts
+        return HzToastInitializer(child: child!);
       },
     );
   }
 }
+```
+
+The `HzToastInitializer` widget creates its own overlay system, eliminating any "No Overlay widget found" errors. This approach is simple, reliable, and doesn't require complex setup.
+
+> **How it works**: The `HzToastInitializer` widget creates a built-in overlay to display toasts. When you call `HzToast.show()`, it automatically uses this overlay system. No manual initialization needed!
+
+### Alternative Manual Setup
+
+If you prefer explicit control over the overlay setup, you can still use the traditional approach:
+
+```dart
+MaterialApp(
+  builder: (context, child) {
+    return Material(
+      child: Overlay(
+        initialEntries: [
+          OverlayEntry(builder: (context) => child!),
+          OverlayEntry(builder: (context) => const HzToastWidget()),
+        ],
+      ),
+    );
+  },
+)
 ```
 
 ## Basic Usage
@@ -177,7 +193,7 @@ HzToast.show(HzToastData(
 ));
 ```
 
-The `HzToastWidget` automatically handles all alignments - you only need to add one instance to your overlay, and it will display toasts in the correct positions based on their alignment property.
+The `HzToastInitializer` automatically handles all alignments - you only need to add one instance to your app's builder, and it will display toasts in the correct positions based on their alignment property.
 
 ## Advanced Usage
 

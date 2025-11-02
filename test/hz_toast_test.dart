@@ -7,6 +7,8 @@ void main() {
     setUp(() {
       // Clear any existing toasts before each test using the test-specific method
       HzToast.clearAll();
+      // Also clear the singleton state
+      HzToast.dispose();
     });
 
     tearDown(() {
@@ -92,6 +94,12 @@ void main() {
       // In tests, we manually clear since there's no widget to handle animation removal
       HzToast.clearAll();
       expect(HzToast.toasts.value.length, 0);
+    });
+
+    test('should provide initializeWithBuiltInOverlay method', () {
+      // This test verifies the initialization method exists and can be called
+      // This method is used by HzToastInitializer to set up the toast system
+      expect(() => HzToast.initializeWithBuiltInOverlay(), returnsNormally);
     });
 
     test('should handle multiple toasts with different alignments', () {

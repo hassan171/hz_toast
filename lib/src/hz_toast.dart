@@ -6,9 +6,21 @@ import 'package:hz_toast/src/hz_model.dart';
 ///
 /// This class provides static methods to show, update, hide, and manage
 /// toast notifications. It maintains a global state of active toasts
-/// and coordinates their display through the [HzToastWidget].
+/// and coordinates their display through the HzToastInitializer widget.
 ///
-/// Example usage:
+/// ## Setup
+///
+/// Wrap your app with HzToastInitializer:
+/// ```dart
+/// MaterialApp(
+///   builder: (context, child) {
+///     return HzToastInitializer(child: child!);
+///   },
+///   home: MyHomePage(),
+/// )
+/// ```
+///
+/// ## Usage
 /// ```dart
 /// // Show a simple success toast
 /// HzToast.show(HzToastData(
@@ -30,21 +42,20 @@ class HzToast {
   ///
   /// This factory constructor ensures only one instance exists throughout
   /// the application lifecycle.
-  /// Creates and returns the singleton instance of [HzToast].
-  ///
-  /// This factory constructor ensures only one instance exists throughout
-  /// the application lifecycle.
   factory HzToast() => _instance;
+
+  /// Enable debug logging for troubleshooting toast issues
+  static bool debugMode = false;
 
   /// Internal list of currently active toasts.
   ///
-  /// This [ValueNotifier] is observed by [HzToastWidget] to reactively
+  /// This [ValueNotifier] is observed by [HzToastInitializer] to reactively
   /// update the UI when toasts are added or removed.
   static final ValueNotifier<List<HzToastData>> _toasts = ValueNotifier([]);
 
   /// Provides read-only access to the current list of active toasts.
   ///
-  /// The [HzToastWidget] listens to this notifier to automatically
+  /// The [HzToastInitializer] listens to this notifier to automatically
   /// update the display when toasts change.
   static ValueNotifier<List<HzToastData>> get toasts => _toasts;
 
@@ -56,11 +67,7 @@ class HzToast {
 
   /// Stream of toast IDs that should start their exit animations.
   ///
-  /// [HzToastWidget] listens to this stream to coordinate smooth
-  /// removal animations before updating the toast list.
-  /// Stream of toast IDs that should start their exit animations.
-  ///
-  /// [HzToastWidget] listens to this stream to coordinate smooth
+  /// [HzToastInitializer] listens to this stream to coordinate smooth
   /// removal animations before updating the toast list.
   static Stream<String> get onRemove => _toastRemoveController.stream;
 
@@ -83,8 +90,25 @@ class HzToast {
   /// }
   /// ```
   static bool show(HzToastData toast) {
-    if (exists(toast.id)) return false;
+    if (debugMode) {
+      debugPrint('🍞 HzToast Debug: show() called for toast: "${toast.message}"');
+      debugPrint('🍞 HzToast Debug: Toast ID: ${toast.id}');
+    }
+
+    if (exists(toast.id)) {
+      if (debugMode) {
+        debugPrint('🍞 HzToast Debug: Toast with ID ${toast.id} already exists - skipping');
+      }
+      return false;
+    }
+
+    // Add to the list - toasts will be displayed via HzToastInitializer's built-in overlay
     _toasts.value = [..._toasts.value, toast];
+
+    if (debugMode) {
+      debugPrint('🍞 HzToast Debug: Toast added to list. Total toasts: ${_toasts.value.length}');
+    }
+
     return true;
   }
 
@@ -197,5 +221,29 @@ class HzToast {
   @visibleForTesting
   static void clearAll() {
     _toasts.value = [];
+  }
+
+  /// Disposes of the toast system resources.
+  ///
+  /// This is primarily intended for testing scenarios where you need
+  /// to clean up the overlay system.
+  @visibleForTesting
+  static void dispose() {
+    _instance._dispose();
+  }
+
+  /// Disposes of the toast system resources.
+  void _dispose() {
+    // No cleanup needed currently
+  }
+
+  /// Initializes the toast system with a built-in overlay.
+  ///
+  /// This is used by HzToastInitializer when it creates its own overlay.
+  /// No context lookup is needed since the overlay is provided directly.
+  static void initializeWithBuiltInOverlay() {
+    if (debugMode) {
+      debugPrint('🍞 HzToast Debug: Initialized with built-in overlay - no context lookup needed');
+    }
   }
 }

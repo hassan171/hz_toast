@@ -342,61 +342,64 @@ class _ToastBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: data.clickable
-          ? () {
-              data.onTap?.call();
-              HzToast.hide(data.id);
-            }
-          : null,
-      child: Container(
-        constraints: BoxConstraints(maxWidth: width * data.maxWidth.clamp(0.0, 1.0)),
-        margin: data.margin,
-        padding: data.padding ?? const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-        decoration: data.decoration ??
-            BoxDecoration(
-              color: data.backgroundColor ?? Colors.white,
-              borderRadius: data.borderRadius ?? _getDefaultBorderRadius(),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withAlpha(50),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-        child: Row(
-          spacing: data.spacing ?? 8,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Main icon (if enabled)
-            if (data.showIcon)
-              data.iconBuilder?.call(data.iconColor ?? data.type.iconColor) ??
-                  Icon(
-                    data.icon ?? data.type.defaultIcon,
-                    color: data.iconColor ?? data.type.iconColor,
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: data.clickable
+            ? () {
+                data.onTap?.call();
+                HzToast.hide(data.id);
+              }
+            : null,
+        child: Container(
+          constraints: BoxConstraints(maxWidth: width * data.maxWidth.clamp(0.0, 1.0)),
+          margin: data.margin,
+          padding: data.padding ?? const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+          decoration: data.decoration ??
+              BoxDecoration(
+                color: data.backgroundColor ?? Colors.white,
+                borderRadius: data.borderRadius ?? _getDefaultBorderRadius(),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withAlpha(50),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
                   ),
+                ],
+              ),
+          child: Row(
+            spacing: data.spacing ?? 8,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Main icon (if enabled)
+              if (data.showIcon)
+                data.iconBuilder?.call(data.iconColor ?? data.type.iconColor) ??
+                    Icon(
+                      data.icon ?? data.type.defaultIcon,
+                      color: data.iconColor ?? data.type.iconColor,
+                    ),
 
-            // Message text (with optional custom builder)
-            data.titleBuilder?.call(data.message, data.textColor ?? data.type.textColor) ??
-                Flexible(
-                  child: Text(
-                    data.message,
-                    style: TextStyle(
-                      fontWeight: FontWeight.w500,
-                      color: data.textColor ?? data.type.textColor,
+              // Message text (with optional custom builder)
+              data.titleBuilder?.call(data.message, data.textColor ?? data.type.textColor) ??
+                  Flexible(
+                    child: Text(
+                      data.message,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w500,
+                        color: data.textColor ?? data.type.textColor,
+                      ),
                     ),
                   ),
-                ),
 
-            // Close button (if enabled)
-            if (data.showCloseIcon)
-              data.closeIconBuilder?.call(data.closeIconColor ?? data.type.closeIconColor) ??
-                  Icon(
-                    data.closeIcon ?? Icons.close,
-                    color: data.closeIconColor ?? data.type.closeIconColor,
-                  ),
-          ],
+              // Close button (if enabled)
+              if (data.showCloseIcon)
+                data.closeIconBuilder?.call(data.closeIconColor ?? data.type.closeIconColor) ??
+                    Icon(
+                      data.closeIcon ?? Icons.close,
+                      color: data.closeIconColor ?? data.type.closeIconColor,
+                    ),
+            ],
+          ),
         ),
       ),
     );
