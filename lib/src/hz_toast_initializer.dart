@@ -35,12 +35,16 @@ class HzToastInitializer extends StatefulWidget {
   /// The spacing between individual toasts.
   final double? spacing;
 
+  /// Whether all toasts should replace any previously visible toasts.
+  final bool showSingleToast;
+
   /// Creates a widget that initializes the toast system.
   const HzToastInitializer({
     super.key,
     required this.child,
     this.edgeSpacing,
     this.spacing,
+    this.showSingleToast = false,
   });
 
   @override
@@ -51,7 +55,16 @@ class _HzToastInitializerState extends State<HzToastInitializer> {
   @override
   void initState() {
     super.initState();
-    HzToast.initializeWithBuiltInOverlay();
+    HzToast.initializeWithBuiltInOverlay(showSingleToastByDefault: widget.showSingleToast);
+  }
+
+  @override
+  void didUpdateWidget(covariant HzToastInitializer oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (oldWidget.showSingleToast != widget.showSingleToast) {
+      HzToast.configure(showSingleToastByDefault: widget.showSingleToast);
+    }
   }
 
   @override
@@ -68,6 +81,7 @@ class _HzToastInitializerState extends State<HzToastInitializer> {
           builder: (context) => HzToastWidget(
             edgeSpacing: widget.edgeSpacing,
             spacing: widget.spacing,
+            showSingleToast: widget.showSingleToast,
           ),
         ),
       ],

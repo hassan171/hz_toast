@@ -71,6 +71,8 @@ class HzToast {
   /// removal animations before updating the toast list.
   static Stream<String> get onRemove => _toastRemoveController.stream;
 
+  static bool _showSingleToastByDefault = false;
+
   /// Displays a new toast notification.
   ///
   /// Adds the provided [toast] to the active toasts list if a toast
@@ -93,6 +95,15 @@ class HzToast {
     if (debugMode) {
       debugPrint('🍞 HzToast Debug: show() called for toast: "${toast.message}"');
       debugPrint('🍞 HzToast Debug: Toast ID: ${toast.id}');
+    }
+
+    final shouldShowSingleToast = toast.showSingleToast || _showSingleToastByDefault;
+
+    if (shouldShowSingleToast && _toasts.value.isNotEmpty) {
+      if (debugMode) {
+        debugPrint('🍞 HzToast Debug: showSingleToast enabled - clearing existing toasts first');
+      }
+      _dismissAllImmediately();
     }
 
     if (exists(toast.id)) {
@@ -214,13 +225,32 @@ class HzToast {
     }
   }
 
+  static void _dismissAllImmediately() {
+    final removedToasts = List<HzToastData>.from(_toasts.value);
+    _toasts.value = [];
+
+    for (final toast in removedToasts) {
+      toast.onClose?.call();
+    }
+  }
+
   /// Immediately clears all toasts without animations.
   ///
   /// This is primarily intended for testing scenarios where you need
   /// immediate cleanup without waiting for animations.
   @visibleForTesting
   static void clearAll() {
-    _toasts.value = [];
+    _dismissAllImmediately();
+  }
+
+  /// Configures default behavior for newly shown toasts.
+  ///
+  /// This is used by [HzToastWidget] and [HzToastInitializer] to apply
+  /// widget-level settings once instead of repeating them on every toast.
+  static void configure({bool? showSingleToastByDefault}) {
+    if (showSingleToastByDefault != null) {
+      _showSingleToastByDefault = showSingleToastByDefault;
+    }
   }
 
   /// Disposes of the toast system resources.
@@ -234,14 +264,16 @@ class HzToast {
 
   /// Disposes of the toast system resources.
   void _dispose() {
-    // No cleanup needed currently
+    _showSingleToastByDefault = false;
   }
 
   /// Initializes the toast system with a built-in overlay.
   ///
   /// This is used by HzToastInitializer when it creates its own overlay.
   /// No context lookup is needed since the overlay is provided directly.
-  static void initializeWithBuiltInOverlay() {
+  static void initializeWithBuiltInOverlay({bool showSingleToastByDefault = false}) {
+    configure(showSingleToastByDefault: showSingleToastByDefault);
+
     if (debugMode) {
       debugPrint('🍞 HzToastInitializer Debug: Toast system initialized with built-in overlay');
     }

@@ -1,3 +1,11 @@
+## 0.0.8
+
+- **Single Toast Mode**: Added `showSingleToast` support to `HzToastData` so a new toast can immediately replace existing visible toasts.
+- **Global Overlay Configuration**: Added `showSingleToast` to `HzToastWidget` and `HzToastInitializer` so the behavior can be configured once for the whole app.
+- **Toast Manager Improvements**: Added global single-toast configuration handling in `HzToast` while preserving the existing multi-toast behavior by default.
+- **Example App Update**: Added a checkbox in the demo app to toggle single-toast mode interactively.
+- **Documentation and Tests**: Updated README usage examples and added coverage for per-toast and widget-level single-toast behavior.
+
 ## 0.0.7
 
 - **Code Optimization**: Removed unused `_initialized` variable and related code

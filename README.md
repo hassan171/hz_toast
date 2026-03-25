@@ -31,7 +31,7 @@ Add this to your package's `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  hz_toast: ^0.0.7
+  hz_toast: ^0.0.8
 ```
 
 Then run:
@@ -59,7 +59,10 @@ class MyApp extends StatelessWidget {
       home: const MyHomePage(),
       builder: (context, child) {
         // Add this widget to enable toasts
-        return HzToastInitializer(child: child!);
+        return HzToastInitializer(
+          showSingleToast: true,
+          child: child!,
+        );
       },
     );
   }
@@ -81,7 +84,7 @@ MaterialApp(
       child: Overlay(
         initialEntries: [
           OverlayEntry(builder: (context) => child!),
-          OverlayEntry(builder: (context) => const HzToastWidget()),
+          OverlayEntry(builder: (context) => const HzToastWidget(showSingleToast: true)),
         ],
       ),
     );
@@ -127,6 +130,31 @@ HzToast.show(HzToastData(
   type: HzToastType.info,
   duration: const Duration(seconds: 5),
   showProgressBar: true,
+));
+```
+
+### Show Only One Toast At A Time
+
+Use `showSingleToast: true` when a new toast should replace any currently visible toasts immediately.
+
+Set it once on `HzToastInitializer` or `HzToastWidget` to make it the default for the whole overlay:
+
+```dart
+MaterialApp(
+  builder: (context, child) {
+    return HzToastInitializer(
+      showSingleToast: true,
+      child: child!,
+    );
+  },
+)
+```
+
+```dart
+HzToast.show(HzToastData(
+  'Saved successfully',
+  type: HzToastType.success,
+  showSingleToast: true,
 ));
 ```
 

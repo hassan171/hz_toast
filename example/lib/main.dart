@@ -8,26 +8,51 @@ void main() {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  bool _showSingleToast = false;
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Hz Toast Test',
       theme: ThemeData(colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple)),
-      home: const MyHomePage(title: 'Hz Toast Test'),
+      home: MyHomePage(
+        title: 'Hz Toast Test',
+        showSingleToast: _showSingleToast,
+        onShowSingleToastChanged: (value) {
+          setState(() {
+            _showSingleToast = value;
+          });
+        },
+      ),
       builder: (context, child) {
-        return HzToastInitializer(child: child!);
+        return HzToastInitializer(
+          showSingleToast: _showSingleToast,
+          child: child!,
+        );
       },
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
+  const MyHomePage({
+    super.key,
+    required this.title,
+    required this.showSingleToast,
+    required this.onShowSingleToastChanged,
+  });
 
   final String title;
+  final bool showSingleToast;
+  final ValueChanged<bool> onShowSingleToastChanged;
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -248,6 +273,19 @@ class _MyHomePageState extends State<MyHomePage> {
                 ElevatedButton(
                   onPressed: _incrementCounter,
                   child: const Text('Increment Counter and Show Success Toast'),
+                ),
+
+                Card(
+                  child: CheckboxListTile(
+                    value: widget.showSingleToast,
+                    onChanged: (value) {
+                      widget.onShowSingleToastChanged(value ?? false);
+                    },
+                    title: const Text('Show only one toast at a time'),
+                    subtitle: const Text('When enabled, each new toast dismisses any currently visible toasts.'),
+                    controlAffinity: ListTileControlAffinity.leading,
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                  ),
                 ),
 
                 const Divider(height: 32),

@@ -37,6 +37,51 @@ void main() {
       expect(HzToast.toasts.value.length, 1);
     });
 
+    test('should replace existing toasts when showSingleToast is true', () {
+      final closedToastIds = <String>[];
+
+      HzToast.show(HzToastData(
+        'First toast',
+        id: 'first-id',
+        onClose: () => closedToastIds.add('first-id'),
+      ));
+      HzToast.show(HzToastData(
+        'Second toast',
+        id: 'second-id',
+        onClose: () => closedToastIds.add('second-id'),
+      ));
+
+      final result = HzToast.show(HzToastData(
+        'Single toast',
+        id: 'single-id',
+        showSingleToast: true,
+      ));
+
+      expect(result, true);
+      expect(HzToast.toasts.value.length, 1);
+      expect(HzToast.toasts.value.first.id, 'single-id');
+      expect(closedToastIds, ['first-id', 'second-id']);
+    });
+
+    test('should still allow multiple toasts when showSingleToast is false', () {
+      HzToast.show(HzToastData('First toast', id: 'first-id'));
+      final result = HzToast.show(HzToastData('Second toast', id: 'second-id'));
+
+      expect(result, true);
+      expect(HzToast.toasts.value.length, 2);
+    });
+
+    test('should replace existing toasts when configured globally', () {
+      HzToast.configure(showSingleToastByDefault: true);
+
+      HzToast.show(HzToastData('First toast', id: 'first-id'));
+      final result = HzToast.show(HzToastData('Second toast', id: 'second-id'));
+
+      expect(result, true);
+      expect(HzToast.toasts.value.length, 1);
+      expect(HzToast.toasts.value.first.id, 'second-id');
+    });
+
     test('should check if toast exists', () {
       final toast = HzToastData('Test message', id: 'test-id');
 
@@ -102,6 +147,22 @@ void main() {
       expect(() => HzToast.initializeWithBuiltInOverlay(), returnsNormally);
     });
 
+    testWidgets('should configure single-toast mode from HzToastWidget', (tester) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(
+            body: HzToastWidget(showSingleToast: true),
+          ),
+        ),
+      );
+
+      HzToast.show(HzToastData('First toast', id: 'first-id'));
+      HzToast.show(HzToastData('Second toast', id: 'second-id'));
+
+      expect(HzToast.toasts.value.length, 1);
+      expect(HzToast.toasts.value.first.id, 'second-id');
+    });
+
     test('should handle multiple toasts with different alignments', () {
       final topLeftToast = HzToastData('Top Left', alignment: HzToastAlignment.topLeft);
       final topRightToast = HzToastData('Top Right', alignment: HzToastAlignment.topRight);
@@ -137,6 +198,7 @@ void main() {
       expect(toast.duration, Duration(seconds: 4));
       expect(toast.clickable, true);
       expect(toast.autoHide, true);
+      expect(toast.showSingleToast, false);
       expect(toast.maxWidth, 0.8);
       expect(toast.showIcon, true);
       expect(toast.showCloseIcon, true);
@@ -151,6 +213,7 @@ void main() {
         duration: Duration(seconds: 10),
         clickable: false,
         autoHide: false,
+        showSingleToast: true,
         maxWidth: 0.9,
         showProgressBar: true,
         alignment: HzToastAlignment.bottomLeft,
@@ -161,6 +224,7 @@ void main() {
       expect(toast.duration, Duration(seconds: 10));
       expect(toast.clickable, false);
       expect(toast.autoHide, false);
+      expect(toast.showSingleToast, true);
       expect(toast.maxWidth, 0.9);
       expect(toast.showProgressBar, true);
       expect(toast.alignment, HzToastAlignment.bottomLeft);
@@ -172,11 +236,13 @@ void main() {
         message: 'Updated message',
         type: HzToastType.warning,
         alignment: HzToastAlignment.topLeft,
+        showSingleToast: true,
       );
 
       expect(copied.message, 'Updated message');
       expect(copied.type, HzToastType.warning);
       expect(copied.alignment, HzToastAlignment.topLeft);
+      expect(copied.showSingleToast, true);
       expect(copied.id, original.id); // ID should remain the same
       expect(copied.duration, original.duration); // Unchanged values should remain
     });

@@ -182,6 +182,12 @@ class HzToastData {
   /// specified duration. When false, the toast persists until manually dismissed.
   final bool autoHide;
 
+  /// Whether this toast should replace all currently visible toasts.
+  ///
+  /// When true, any active toasts are dismissed immediately before this toast
+  /// is shown so only one toast remains visible at a time.
+  final bool showSingleToast;
+
   /// Whether to show a progress bar indicating remaining time.
   ///
   /// Only visible when [autoHide] is true. The progress bar shows how much
@@ -220,6 +226,7 @@ class HzToastData {
     this.duration = const Duration(seconds: 4),
     this.clickable = true,
     this.autoHide = true,
+    this.showSingleToast = false,
     this.maxWidth = 0.8,
     this.decoration,
     this.backgroundColor,
@@ -262,6 +269,7 @@ class HzToastData {
     Duration? duration,
     bool? clickable,
     bool? autoHide,
+    bool? showSingleToast,
     double? maxWidth,
     BoxDecoration? decoration,
     Color? backgroundColor,
@@ -290,6 +298,7 @@ class HzToastData {
       duration: duration ?? this.duration,
       clickable: clickable ?? this.clickable,
       autoHide: autoHide ?? this.autoHide,
+      showSingleToast: showSingleToast ?? this.showSingleToast,
       maxWidth: maxWidth ?? this.maxWidth,
       decoration: decoration ?? this.decoration,
       backgroundColor: backgroundColor ?? this.backgroundColor,

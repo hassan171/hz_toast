@@ -30,7 +30,7 @@ import 'package:hz_toast/hz_toast.dart';
 ///   },
 /// )
 /// ```
-class HzToastWidget extends StatelessWidget {
+class HzToastWidget extends StatefulWidget {
   /// Distance from the edge of the screen to the first toast.
   ///
   /// For top alignments, this is the distance from the top.
@@ -44,6 +44,12 @@ class HzToastWidget extends StatelessWidget {
   /// any margins specified in individual [HzToastData.margin] properties.
   final double? spacing;
 
+  /// Whether all toasts shown through this widget should replace existing toasts.
+  ///
+  /// When true, the widget configures [HzToast] so every new toast dismisses
+  /// any currently visible toasts before it is displayed.
+  final bool showSingleToast;
+
   /// Creates a toast display widget that handles all alignments automatically.
   ///
   /// The [edgeSpacing] and [spacing] parameters provide control over positioning.
@@ -51,7 +57,28 @@ class HzToastWidget extends StatelessWidget {
     super.key,
     this.edgeSpacing,
     this.spacing,
+    this.showSingleToast = false,
   });
+
+  @override
+  State<HzToastWidget> createState() => _HzToastWidgetState();
+}
+
+class _HzToastWidgetState extends State<HzToastWidget> {
+  @override
+  void initState() {
+    super.initState();
+    HzToast.configure(showSingleToastByDefault: widget.showSingleToast);
+  }
+
+  @override
+  void didUpdateWidget(covariant HzToastWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (oldWidget.showSingleToast != widget.showSingleToast) {
+      HzToast.configure(showSingleToastByDefault: widget.showSingleToast);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -71,8 +98,8 @@ class HzToastWidget extends StatelessWidget {
                 toasts: allToasts.where((toast) => toast.alignment == alignment).toList(),
                 width: width,
                 height: height,
-                edgeSpacing: edgeSpacing,
-                spacing: spacing,
+                edgeSpacing: widget.edgeSpacing,
+                spacing: widget.spacing,
               ),
           ],
         );
