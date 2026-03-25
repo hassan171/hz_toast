@@ -1,19 +1,23 @@
 # Exclude media not needed for package consumers
-*.mp4
+
+\*.mp4
 
 # Exclude local/editor files
+
 .git/
 .idea/
 .vscode/
 .metadata
-*.iml
+\*.iml
 
 # Exclude generated Dart/Flutter artifacts
+
 .dart_tool/
 build/
 pubspec.lock
 
 # Exclude example build artifacts
+
 example/build/
 example/.dart_tool/
 example/.flutter-plugins
